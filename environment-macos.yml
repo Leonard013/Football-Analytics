@@ -1,0 +1,19 @@
+name: football-analytics
+channels:
+  - pytorch
+  - defaults
+dependencies:
+  - python=3.11
+  - pytorch
+  - torchvision
+  - pip
+  - pip:
+      - flask
+      - flask-socketio
+      - gevent
+      - gevent-websocket
+      - opencv-python
+      - numpy
+      - scipy
+      - scikit-learn
+      - ultralytics
