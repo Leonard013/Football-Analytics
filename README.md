@@ -26,7 +26,7 @@ conda activate football-analytics
 Place a video file at `video/match.mp4`, then:
 
 ```bash
-python Football_Analytics.py
+python app.py
 ```
 
 Open `http://localhost:5000` in your browser.

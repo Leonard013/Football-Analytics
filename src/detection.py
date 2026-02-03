@@ -3,17 +3,6 @@ import numpy as np
 from scipy.stats import pearsonr
 
 
-
-
-class Team:
-    def __init__(self, color):
-        self.color = color
-        self.player = []
-        self.ball_possession = 0
-        self.passages = 0
-        self.tackles = 0
-        self.outs = 0
-
 # It returns the main color of a frame
 def get_main_colors(frame):
     pixels = frame.reshape(-1, 3)
@@ -29,43 +18,17 @@ def color_picker(xc,yc,wc,hc, frame_c):
 def team_recognizer(color1, color2, rec_col1):
     norm1 = np.linalg.norm(color1-rec_col1)
     norm2 = np.linalg.norm(color2-rec_col1)
-    if norm1< norm2 and norm1< 140:    
+    if norm1< norm2 and norm1< 140:
         return 0
     elif norm2< norm1 and norm2< 140:
-        return 1 
-
-# It returns the hex code of a color given its BGR code
-def bgr_to_hex(bgr):
-    b, g, r = bgr
-    hex_color = '#{:02x}{:02x}{:02x}'.format(r, g, b)
-    return hex_color
-
-# It returns the new width and height of the frame given the maximum width and height to fit the video in the screen
-def resize_frame(frame, max_width, max_height):
-
-    width, height = frame.shape[1], frame.shape[0]
-    width_scale = max_width / width
-    height_scale = max_height / height
-    scale = min(width_scale, height_scale)
-
-    new_width = int(width * scale)
-    new_height = int(height * scale)
-    resized_frame = cv2.resize(frame, (new_width, new_height))
-    background = np.zeros((max_height, max_width, 3), dtype=np.uint8)
-
-    x = (max_width - new_width) // 2
-    y = (max_height - new_height) // 2
-
-    background[y:y+new_height, x:x+new_width] = resized_frame
-    
-    return background
+        return 1
 
 def isframe(frame):
     if frame is None:
         return False
     else:
         return True
-    
+
 def is_contour_straight(points):
     xx = [i[0] for i in points]
     yy = [i[1] for i in points]
@@ -91,7 +54,7 @@ def find_extremes(frame, contours):
     for contour in contours:
         # Find the bounding rectangle for the contour
         x, y, w, h = cv2.boundingRect(contour)
-        
+
         # Check if the current contour is higher than the previous highest
         pts = [[i[0][0], i[0][1]] for i in contour]
         straightness = is_contour_straight(pts)
@@ -107,8 +70,8 @@ def find_extremes(frame, contours):
         elif x > leftmost_x and straightness[0] and -1 <= straightness[1] <= float('inf'):
             leftmost_x = x
             leftmost_contour = pts
-    
-    
+
+
     return highest_contour, rightmost_contour, lowest_contour, leftmost_contour
 
 
@@ -136,4 +99,3 @@ def field_lines(im):
 
     cont_pts = find_extremes(im, good_cont)
     return cont_pts[0], cont_pts[1], cont_pts[2], cont_pts[3]
-

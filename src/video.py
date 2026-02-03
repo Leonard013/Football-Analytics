@@ -1,19 +1,12 @@
 import cv2
 import numpy as np
 import base64
-import threading
 import torch
 from ultralytics import YOLO
-from flask import Flask, render_template
-from flask_socketio import SocketIO
-from Definitions import Team, get_main_colors, team_recognizer, resize_frame, field_lines, bgr_to_hex
-from Set_up import set_up
-
-app = Flask(__name__)
-socketio = SocketIO(app, cors_allowed_origins="*")
-
-# Configuration
-video_path = "video/match.mp4"
+from src.models import Team
+from src.detection import get_main_colors, team_recognizer, field_lines
+from src.image import resize_frame, bgr_to_hex
+from src.setup import set_up
 
 
 def get_device():
@@ -24,12 +17,7 @@ def get_device():
     return 'cpu'
 
 
-@app.route('/')
-def index():
-    return render_template('index.html')
-
-
-def process_video():
+def process_video(socketio, video_path):
     device = get_device()
     print(f"Using device: {device}")
     model = YOLO("yolov8m.pt")
@@ -220,14 +208,3 @@ def process_video():
         socketio.sleep(frame_delay)
 
     cap.release()
-
-
-@socketio.on('connect')
-def handle_connect():
-    print("Client connected")
-    threading.Thread(target=process_video, daemon=True).start()
-
-
-if __name__ == '__main__':
-    print("Starting Football Analytics server on http://localhost:5000")
-    socketio.run(app, host='0.0.0.0', port=5000, debug=False, allow_unsafe_werkzeug=True)

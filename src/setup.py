@@ -1,9 +1,8 @@
-
 import random
 from sklearn.cluster import KMeans
 import numpy as np
 import cv2
-from Definitions import color_picker, Team, isframe
+from src.detection import color_picker, isframe
 
 
 def set_up(array_col, cap, model):
